@@ -1,26 +1,23 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import Forecast from "./Forecast";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <div style={{display: 'grid', padding: '20px'}}>
+            <h1>Weather</h1>
+            <div>
+                <label>Search By City</label>
+                <input/>
+                <button>Search</button>
+            </div>
+            <div>
+                <label>Search By Coordinates</label>
+                <input/>
+                <button>Search</button>
+            </div>
+            <Forecast />
+        </div>
+    );
 }
 
 export default App;
