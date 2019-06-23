@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Forecast from './Forecast';
 import axios from 'axios';
 import _ from 'lodash';
+import { geolocated } from 'react-geolocated';
 
 const API_URL = 'https://api.openweathermap.org/data/2.5/forecast';
 
 const getRequestParameters = ({ query, selectedOption }) => {
-  const result = { APPID: 'cea8a222fb5dfc35ac3e87b2e9ffaae5' };
+  const result = { APPID: '6e3d46c3297a91e7de6d22cb4e483570' };
   if (selectedOption === 'city') {
     result.q = `${query},us`;
   } else {
@@ -17,24 +18,39 @@ const getRequestParameters = ({ query, selectedOption }) => {
   return result;
 };
 
-function App() {
+function App({ isGeolocationEnabled, coords }) {
   const [query, setQuery] = useState();
   const [predictions, setPredictions] = useState();
   const [city, setCity] = useState();
   const [selectedOption, setSelectedOption] = useState('city');
   const [isLoading, setIsLoading] = useState(false);
 
+  const fetchPredictions = async ({ query, selectedOption }) => {
+    setIsLoading(true);
+    const data = await axios.get(API_URL, {
+      params: getRequestParameters({ query, selectedOption })
+    });
+    setPredictions(data.data.list);
+    setCity(data.data.city);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    if (isGeolocationEnabled && coords) {
+      fetchPredictions({
+        query: `${coords.latitude}, ${coords.longitude}`,
+        selectedOption: 'coordinates'
+      });
+    }
+  }, [coords]);
+
   const handleSearch = async () => {
-    if (!query){
+    if (!query) {
       return;
     }
     setIsLoading(true);
     try {
-      const data = await axios.get(API_URL, {
-        params: getRequestParameters({ query, selectedOption })
-      });
-      setPredictions(data.data.list);
-      setCity(data.data.city);
+      await fetchPredictions({ query, selectedOption });
     } catch (error) {
       const defaultMessage =
         'An error occured while searching for the forecast';
@@ -84,4 +100,9 @@ function App() {
   );
 }
 
-export default App;
+export default geolocated({
+  positionOptions: {
+    enableHighAccuracy: false
+  },
+  userDecisionTimeout: 5000
+})(App);
