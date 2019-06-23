@@ -7,17 +7,18 @@ const gridStyle = {
 };
 
 function Forecast({predictions, city, isLoading}) {
-    if (!predictions || !city){
-        return 'No results to display'
-    }
     if (isLoading){
-        return 'Loading...'
+        return <div style={{ paddingTop: '10px'}}>Loading...</div>
+    }
+
+    if (!predictions || !city){
+        return ''
     }
     return (
         <div style={{
             display: 'grid',
         }}>
-            <h2>Showing results for {city.name} (Coordinates {city.coord.lat} Lat {city.coord.lon} Long)</h2>
+            <h2>Showing results for {city.name} ({city.coord.lat}, {city.coord.lon})</h2>
             <div style={gridStyle}>
                 <div><b>time</b></div>
                 <div><b>temperature</b></div>
