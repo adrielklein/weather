@@ -3,20 +3,10 @@ import Forecast from './Forecast';
 import axios from 'axios';
 import _ from 'lodash';
 import { geolocated } from 'react-geolocated';
+import { getRequestParameters } from './utils/requestFormatter';
+import Search from './Search';
 
 const API_URL = 'https://api.openweathermap.org/data/2.5/forecast';
-
-const getRequestParameters = ({ query, selectedOption }) => {
-  const result = { APPID: '6e3d46c3297a91e7de6d22cb4e483570', units: 'imperial' };
-  if (selectedOption === 'city') {
-    result.q = `${query},us`;
-  } else {
-    const [lat, lon] = query.split(',');
-    result.lat = lat.trim();
-    result.lon = lon.trim();
-  }
-  return result;
-};
 
 function App({ isGeolocationEnabled, coords }) {
   const [query, setQuery] = useState();
@@ -64,37 +54,16 @@ function App({ isGeolocationEnabled, coords }) {
   return (
     <div style={{ display: 'grid', padding: '20px' }}>
       <h1>Weather</h1>
-      <label>Search By...</label>
-      <div>
-        <input
-          type="radio"
-          value="cityName"
-          checked={selectedOption === 'city'}
-          onChange={() => handleSetSelectedOption('city')}
-        />
-        City
-      </div>
-      <div>
-        <input
-          type="radio"
-          value="coordinates"
-          checked={selectedOption === 'coordinates'}
-          onChange={() => handleSetSelectedOption('coordinates')}
-        />
-        Coordinates
-      </div>
-      <div>
-        <input
-          type="text"
-          placeholder={
-            selectedOption === 'city' ? 'San Francisco' : '40.7128, -74.0060'
-          }
-          value={query}
-          onChange={event => setQuery(event.target.value)}
-        />
-        <button onClick={handleSearch}>Search</button>
-      </div>
-      <Forecast isLoading={isLoading} predictions={predictions} city={city} />
+      <Search
+        selectedOption={selectedOption}
+        handleSetSelectedOption={handleSetSelectedOption}
+        query={query}
+        setQuery={setQuery}
+        handleSearch={handleSearch}
+      />
+      {predictions && city && (
+        <Forecast isLoading={isLoading} predictions={predictions} city={city} />
+      )}
     </div>
   );
 }
