@@ -7,7 +7,7 @@ import { geolocated } from 'react-geolocated';
 const API_URL = 'https://api.openweathermap.org/data/2.5/forecast';
 
 const getRequestParameters = ({ query, selectedOption }) => {
-  const result = { APPID: '6e3d46c3297a91e7de6d22cb4e483570' };
+  const result = { APPID: '6e3d46c3297a91e7de6d22cb4e483570', units: 'imperial' };
   if (selectedOption === 'city') {
     result.q = `${query},us`;
   } else {
@@ -48,7 +48,6 @@ function App({ isGeolocationEnabled, coords }) {
     if (!query) {
       return;
     }
-    setIsLoading(true);
     try {
       await fetchPredictions({ query, selectedOption });
     } catch (error) {
